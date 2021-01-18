@@ -11,6 +11,9 @@
 		"AzureSqlDatabase_connectionString": {
 			"value": ""
 		},
+		"AzureSqlDatabaseCDC_connectionString": {
+			"value": ""
+		},
 		"AzureSqlDatabaseIL_connectionString": {
 			"value": ""
 		},

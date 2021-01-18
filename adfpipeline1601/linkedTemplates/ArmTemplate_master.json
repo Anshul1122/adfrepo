@@ -15,6 +15,10 @@
 			"type": "secureString",
 			"metadata": "Secure string for 'connectionString' of 'AzureSqlDatabase'"
 		},
+		"AzureSqlDatabaseCDC_connectionString": {
+			"type": "secureString",
+			"metadata": "Secure string for 'connectionString' of 'AzureSqlDatabaseCDC'"
+		},
 		"AzureSqlDatabaseIL_connectionString": {
 			"type": "secureString",
 			"metadata": "Secure string for 'connectionString' of 'AzureSqlDatabaseIL'"
@@ -59,6 +63,9 @@
 					},
 					"AzureSqlDatabase_connectionString": {
 						"value": "[parameters('AzureSqlDatabase_connectionString')]"
+					},
+					"AzureSqlDatabaseCDC_connectionString": {
+						"value": "[parameters('AzureSqlDatabaseCDC_connectionString')]"
 					},
 					"AzureSqlDatabaseIL_connectionString": {
 						"value": "[parameters('AzureSqlDatabaseIL_connectionString')]"
