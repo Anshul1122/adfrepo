@@ -27,9 +27,21 @@
 			"type": "secureString",
 			"metadata": "Secure string for 'connectionString' of 'AzureStorageLinkedService'"
 		},
+		"SqlServerOnPrem_connectionString": {
+			"type": "secureString",
+			"metadata": "Secure string for 'connectionString' of 'SqlServerOnPrem'"
+		},
+		"SqlServerOnPrem_password": {
+			"type": "secureString",
+			"metadata": "Secure string for 'password' of 'SqlServerOnPrem'"
+		},
 		"AzureDataLakeStorageGen2_properties_typeProperties_url": {
 			"type": "string",
 			"defaultValue": "https://adlsgen21601.dfs.core.windows.net"
+		},
+		"SqlServerOnPrem_properties_typeProperties_userName": {
+			"type": "string",
+			"defaultValue": "fareast\\ansag"
 		},
 		"containerUri": {
 			"type": "string",
@@ -73,12 +85,41 @@
 					"AzureStorageLinkedService_connectionString": {
 						"value": "[parameters('AzureStorageLinkedService_connectionString')]"
 					},
+					"SqlServerOnPrem_connectionString": {
+						"value": "[parameters('SqlServerOnPrem_connectionString')]"
+					},
+					"SqlServerOnPrem_password": {
+						"value": "[parameters('SqlServerOnPrem_password')]"
+					},
 					"AzureDataLakeStorageGen2_properties_typeProperties_url": {
 						"value": "[parameters('AzureDataLakeStorageGen2_properties_typeProperties_url')]"
+					},
+					"SqlServerOnPrem_properties_typeProperties_userName": {
+						"value": "[parameters('SqlServerOnPrem_properties_typeProperties_userName')]"
 					}
 				}
 			},
 			"dependsOn": []
+		},
+		{
+			"name": "adfpipeline1601_ArmTemplate_1",
+			"type": "Microsoft.Resources/deployments",
+			"apiVersion": "2018-02-01",
+			"properties": {
+				"mode": "incremental",
+				"templateLink": {
+					"uri": "[concat(parameters('containerUri'), '/ArmTemplate_1.json', parameters('containerSasToken'))]",
+					"contentVersion": "1.0.0.0"
+				},
+				"parameters": {
+					"factoryName": {
+						"value": "[parameters('factoryName')]"
+					}
+				}
+			},
+			"dependsOn": [
+				"[resourceId('Microsoft.Resources/deployments', 'adfpipeline1601_ArmTemplate_0')]"
+			]
 		}
 	]
 }

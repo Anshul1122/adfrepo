@@ -20,8 +20,17 @@
 		"AzureStorageLinkedService_connectionString": {
 			"value": ""
 		},
+		"SqlServerOnPrem_connectionString": {
+			"value": ""
+		},
+		"SqlServerOnPrem_password": {
+			"value": ""
+		},
 		"AzureDataLakeStorageGen2_properties_typeProperties_url": {
 			"value": "https://adlsgen21601.dfs.core.windows.net"
+		},
+		"SqlServerOnPrem_properties_typeProperties_userName": {
+			"value": "fareast\\ansag"
 		}
 	}
 }
