@@ -20,26 +20,8 @@
 		"AzureStorageLinkedService_connectionString": {
 			"value": ""
 		},
-		"SqlServerOnPrem_connectionString": {
-			"value": ""
-		},
-		"SqlServerOnPrem_password": {
-			"value": ""
-		},
 		"AzureDataLakeStorageGen2_properties_typeProperties_url": {
 			"value": "https://adlsgen21601.dfs.core.windows.net"
-		},
-		"SqlServerOnPrem_properties_typeProperties_userName": {
-			"value": "fareast\\ansag"
-		},
-		"SSISIR_properties_typeProperties_ssisProperties_catalogInfo_catalogServerEndpoint": {
-			"value": "servertripsdata.database.windows.net"
-		},
-		"SSISIR_properties_typeProperties_ssisProperties_catalogInfo_catalogAdminUserName": {
-			"value": "admin123"
-		},
-		"SSISIR_properties_typeProperties_ssisProperties_catalogInfo_catalogAdminPassword": {
-			"value": ""
 		},
 		"containerUri": {
 			"value": ""
