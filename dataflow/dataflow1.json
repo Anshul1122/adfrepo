@@ -5,10 +5,6 @@
 		"typeProperties": {
 			"sources": [
 				{
-					"dataset": {
-						"referenceName": "Json1",
-						"type": "DatasetReference"
-					},
 					"name": "source1"
 				}
 			],
@@ -22,16 +18,8 @@
 				"parameters{",
 				"     parameter1 as string",
 				"}",
-				"source(output(",
-				"          {123} as (age as short, name as string)[],",
-				"          first_name as string,",
-				"          last_name as string,",
-				"          location as string",
-				"     ),",
-				"     allowSchemaDrift: true,",
-				"     validateSchema: false,",
-				"     ignoreNoFilesFound: false,",
-				"     documentForm: 'arrayOfDocuments') ~> source1",
+				"source(allowSchemaDrift: true,",
+				"     validateSchema: false) ~> source1",
 				"source1 foldDown(unroll(123),",
 				"     mapColumn(",
 				"          first_name,",
