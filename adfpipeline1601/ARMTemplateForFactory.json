@@ -135,6 +135,10 @@
 						}
 					}
 				],
+				"policy": {
+					"elapsedTimeMetric": {},
+					"cancelAfter": {}
+				},
 				"annotations": [],
 				"lastPublishTime": "2021-01-16T17:35:42Z"
 			},
@@ -205,6 +209,10 @@
 						]
 					}
 				],
+				"policy": {
+					"elapsedTimeMetric": {},
+					"cancelAfter": {}
+				},
 				"annotations": []
 			},
 			"dependsOn": [
@@ -384,6 +392,10 @@
 						}
 					}
 				],
+				"policy": {
+					"elapsedTimeMetric": {},
+					"cancelAfter": {}
+				},
 				"annotations": []
 			},
 			"dependsOn": [
@@ -565,6 +577,10 @@
 						}
 					}
 				],
+				"policy": {
+					"elapsedTimeMetric": {},
+					"cancelAfter": {}
+				},
 				"annotations": []
 			},
 			"dependsOn": [
@@ -1120,6 +1136,36 @@
 			"dependsOn": []
 		},
 		{
+			"name": "[concat(parameters('factoryName'), '/trigger1')]",
+			"type": "Microsoft.DataFactory/factories/triggers",
+			"apiVersion": "2018-06-01",
+			"properties": {
+				"annotations": [],
+				"runtimeState": "Started",
+				"pipelines": [
+					{
+						"pipelineReference": {
+							"referenceName": "AzureSQLtoADLS",
+							"type": "PipelineReference"
+						},
+						"parameters": {}
+					}
+				],
+				"type": "ScheduleTrigger",
+				"typeProperties": {
+					"recurrence": {
+						"frequency": "Minute",
+						"interval": 1,
+						"startTime": "2021-10-21T10:27:00Z",
+						"timeZone": "UTC"
+					}
+				}
+			},
+			"dependsOn": [
+				"[concat(variables('factoryId'), '/pipelines/AzureSQLtoADLS')]"
+			]
+		},
+		{
 			"name": "[concat(parameters('factoryName'), '/JoinAndAggregateData')]",
 			"type": "Microsoft.DataFactory/factories/dataflows",
 			"apiVersion": "2018-06-01",
@@ -1162,7 +1208,7 @@
 							"name": "Selectcolumns"
 						}
 					],
-					"script": "source(output(\n\t\tmedallion as string,\n\t\thack_license as string,\n\t\tvendor_id as string,\n\t\trate_code as string,\n\t\tstore_and_fwd_flag as string,\n\t\tpickup_datetime as string,\n\t\tdropoff_datetime as string,\n\t\tpassenger_count as string,\n\t\ttrip_time_in_secs as string,\n\t\ttrip_distance as string,\n\t\tpickup_longitude as string,\n\t\tpickup_latitude as string,\n\t\tdropoff_longitude as string,\n\t\tdropoff_latitude as string\n\t),\n\tallowSchemaDrift: true,\n\tvalidateSchema: false,\n\tignoreNoFilesFound: false) ~> TripDataCSV\nsource(output(\n\t\tmedallion as string,\n\t\thack_license as string,\n\t\tvendor_id as string,\n\t\tpickup_datetime as string,\n\t\tpayment_type as string,\n\t\tfare_amount as string,\n\t\tsurcharge as string,\n\t\tmta_tax as string,\n\t\ttip_amount as string,\n\t\ttolls_amount as string,\n\t\ttotal_amount as string\n\t),\n\tallowSchemaDrift: true,\n\tvalidateSchema: false,\n\tignoreNoFilesFound: false,\n\tisolationLevel: 'READ_UNCOMMITTED',\n\tformat: 'table') ~> TripFaresSQL\nTripDataCSV, TripFaresSQL join(TripDataCSV@medallion == TripFaresSQL@medallion\n\t&& TripDataCSV@hack_license == TripFaresSQL@hack_license\n\t&& TripDataCSV@vendor_id == TripFaresSQL@vendor_id\n\t&& TripDataCSV@pickup_datetime == TripFaresSQL@pickup_datetime,\n\tjoinType:'inner',\n\tbroadcast: 'auto')~> InnerJoinWithTripFares\nSelectcolumns aggregate(groupBy(payment_type),\n\taverage_fare = avg(toInteger(total_amount)),\n\t\ttotal_trip_distance = sum(toInteger(trip_distance))) ~> AggregateByPaymentType\nInnerJoinWithTripFares select(mapColumn(\n\t\tmedallion = TripDataCSV@medallion,\n\t\thack_license = TripDataCSV@hack_license,\n\t\tvendor_id = TripDataCSV@vendor_id,\n\t\trate_code,\n\t\tstore_and_fwd_flag,\n\t\tpickup_datetime = TripDataCSV@pickup_datetime,\n\t\tdropoff_datetime,\n\t\tpassenger_count,\n\t\ttrip_time_in_secs,\n\t\ttrip_distance,\n\t\tpickup_longitude,\n\t\tpickup_latitude,\n\t\tdropoff_longitude,\n\t\tdropoff_latitude,\n\t\tmedallion = TripFaresSQL@medallion,\n\t\thack_license = TripFaresSQL@hack_license,\n\t\tvendor_id = TripFaresSQL@vendor_id,\n\t\tpickup_datetime = TripFaresSQL@pickup_datetime,\n\t\tpayment_type,\n\t\tfare_amount,\n\t\tsurcharge,\n\t\tmta_tax,\n\t\ttip_amount,\n\t\ttolls_amount,\n\t\ttotal_amount\n\t),\n\tskipDuplicateMapInputs: false,\n\tskipDuplicateMapOutputs: true) ~> Selectcolumns\nAggregateByPaymentType sink(allowSchemaDrift: true,\n\tvalidateSchema: false,\n\tdeletable:false,\n\tinsertable:true,\n\tupdateable:false,\n\tupsertable:false,\n\trecreate:true,\n\tformat: 'table',\n\tskipDuplicateMapInputs: true,\n\tskipDuplicateMapOutputs: true,\n\terrorHandlingOption: 'stopOnFirstError') ~> AggregatedTaxiData"
+					"script": "source(output(\n\t\tmedallion as string,\n\t\thack_license as string,\n\t\tvendor_id as string,\n\t\trate_code as string,\n\t\tstore_and_fwd_flag as string,\n\t\tpickup_datetime as string,\n\t\tdropoff_datetime as string,\n\t\tpassenger_count as string,\n\t\ttrip_time_in_secs as string,\n\t\ttrip_distance as string,\n\t\tpickup_longitude as string,\n\t\tpickup_latitude as string,\n\t\tdropoff_longitude as string,\n\t\tdropoff_latitude as string\n\t),\n\tallowSchemaDrift: true,\n\tvalidateSchema: false,\n\tignoreNoFilesFound: false) ~> TripDataCSV\nsource(output(\n\t\tmedallion as string,\n\t\thack_license as string,\n\t\tvendor_id as string,\n\t\tpickup_datetime as string,\n\t\tpayment_type as string,\n\t\tfare_amount as string,\n\t\tsurcharge as string,\n\t\tmta_tax as string,\n\t\ttip_amount as string,\n\t\ttolls_amount as string,\n\t\ttotal_amount as string\n\t),\n\tallowSchemaDrift: true,\n\tvalidateSchema: false,\n\tisolationLevel: 'READ_UNCOMMITTED',\n\tformat: 'table') ~> TripFaresSQL\nTripDataCSV, TripFaresSQL join(TripDataCSV@medallion == TripFaresSQL@medallion\n\t&& TripDataCSV@hack_license == TripFaresSQL@hack_license\n\t&& TripDataCSV@vendor_id == TripFaresSQL@vendor_id\n\t&& TripDataCSV@pickup_datetime == TripFaresSQL@pickup_datetime,\n\tjoinType:'inner',\n\tmatchType:'exact',\n\tignoreSpaces: false,\n\tbroadcast: 'auto')~> InnerJoinWithTripFares\nSelectcolumns aggregate(groupBy(payment_type),\n\taverage_fare = avg(toInteger(total_amount)),\n\t\ttotal_trip_distance = sum(toInteger(trip_distance))) ~> AggregateByPaymentType\nInnerJoinWithTripFares select(mapColumn(\n\t\tmedallion = TripDataCSV@medallion,\n\t\thack_license = TripDataCSV@hack_license,\n\t\tvendor_id = TripDataCSV@vendor_id,\n\t\trate_code,\n\t\tstore_and_fwd_flag,\n\t\tpickup_datetime = TripDataCSV@pickup_datetime,\n\t\tdropoff_datetime,\n\t\tpassenger_count,\n\t\ttrip_time_in_secs,\n\t\ttrip_distance,\n\t\tpickup_longitude,\n\t\tpickup_latitude,\n\t\tdropoff_longitude,\n\t\tdropoff_latitude,\n\t\tmedallion = TripFaresSQL@medallion,\n\t\thack_license = TripFaresSQL@hack_license,\n\t\tvendor_id = TripFaresSQL@vendor_id,\n\t\tpickup_datetime = TripFaresSQL@pickup_datetime,\n\t\tpayment_type,\n\t\tfare_amount,\n\t\tsurcharge,\n\t\tmta_tax,\n\t\ttip_amount,\n\t\ttolls_amount,\n\t\ttotal_amount\n\t),\n\tskipDuplicateMapInputs: false,\n\tskipDuplicateMapOutputs: true) ~> Selectcolumns\nAggregateByPaymentType sink(allowSchemaDrift: true,\n\tvalidateSchema: false,\n\tdeletable:false,\n\tinsertable:true,\n\tupdateable:false,\n\tupsertable:false,\n\trecreate:true,\n\tformat: 'table',\n\tskipDuplicateMapInputs: true,\n\tskipDuplicateMapOutputs: true,\n\terrorHandlingOption: 'stopOnFirstError') ~> AggregatedTaxiData"
 				}
 			},
 			"dependsOn": [
@@ -1170,6 +1216,42 @@
 				"[concat(variables('factoryId'), '/datasets/TripFaresSQL')]",
 				"[concat(variables('factoryId'), '/datasets/AggregatedTaxiData')]"
 			]
+		},
+		{
+			"name": "[concat(parameters('factoryName'), '/pipeline1')]",
+			"type": "Microsoft.DataFactory/factories/pipelines",
+			"apiVersion": "2018-06-01",
+			"properties": {
+				"activities": [
+					{
+						"name": "Data flow1",
+						"type": "ExecuteDataFlow",
+						"dependsOn": [],
+						"policy": {
+							"timeout": "0.12:00:00",
+							"retry": 0,
+							"retryIntervalInSeconds": 30,
+							"secureOutput": false,
+							"secureInput": false
+						},
+						"userProperties": [],
+						"typeProperties": {
+							"staging": {},
+							"compute": {
+								"coreCount": 8,
+								"computeType": "General"
+							},
+							"traceLevel": "Fine"
+						}
+					}
+				],
+				"policy": {
+					"elapsedTimeMetric": {},
+					"cancelAfter": {}
+				},
+				"annotations": []
+			},
+			"dependsOn": []
 		}
 	]
 }
